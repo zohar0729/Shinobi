@@ -6,71 +6,44 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
+import twitter4j.User;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class Shinobi {
-
-	public static void main(String[] args) {
-		if(args.length < 1){
-			System.out.println("");
-			System.exit(-1);
-		}
-		try{
-			Twitter twitter = new TwitterFactory().getInstance();
-            try {
-                // get request token.
-                // this will throw IllegalStateException if access token is already available
-                RequestToken requestToken = twitter.getOAuthRequestToken();
-                System.out.println("Got request token.");
-                System.out.println("Request token: " + requestToken.getToken());
-                System.out.println("Request token secret: " + requestToken.getTokenSecret());
-                AccessToken accessToken = null;
-
-                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-                while (null == accessToken) {
-                    System.out.println("Open the following URL and grant access to your account:");
-                    System.out.println(requestToken.getAuthorizationURL());
-                    System.out.print("Enter the PIN(if available) and hit enter after you granted access.[PIN]:");
-                    String pin = br.readLine();
-                    try {
-                        if (pin.length() > 0) {
-                            accessToken = twitter.getOAuthAccessToken(requestToken, pin);
-                        } else {
-                            accessToken = twitter.getOAuthAccessToken(requestToken);
-                        }
-                    } catch (TwitterException te) {
-                        if (401 == te.getStatusCode()) {
-                            System.out.println("Unable to get the access token.");
-                        } else {
-                            te.printStackTrace();
-                        }
-                    }
-                }
-                System.out.println("Got access token.");
-                System.out.println("Access token: " + accessToken.getToken());
-                System.out.println("Access token secret: " + accessToken.getTokenSecret());
-            } catch (IllegalStateException ie) {
-                // access token is already available, or consumer key/secret is not set.
-                if (!twitter.getAuthorization().isEnabled()) {
-                    System.out.println("OAuth consumer key/secret is not set.");
-                    System.exit(-1);
-                }
-            }
-            Status status = twitter.updateStatus(args[0]);
-            System.out.println("Successfully updated the status to [" + status.getText() + "].");
-            System.exit(0);
-		} catch (TwitterException te) {
-            te.printStackTrace();
-            System.out.println("Failed to get timeline: " + te.getMessage());
-            System.exit(-1);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-            System.out.println("Failed to read the system input.");
-            System.exit(-1);
-        }
+	private static long diffDate(Date d){
+		long b, a;
+		Date date = new Date();
+		b=d.getTime();
+		a=date.getTime();
+		
+		System.out.println(a-b);
+		
+		return a-b;
+	}
+	
+	public static void main(String[] args) throws TwitterException{
+		Twitter twitter = new TwitterFactory().getInstance();
+		User user = twitter.verifyCredentials();
+		Date diff = new Date(diffDate(user.getStatus().getCreatedAt()));
+		System.out.println(new Date());
+		System.out.println(user.getStatus().getCreatedAt());
+		SimpleDateFormat sdf = new SimpleDateFormat("MM月dd日HH時間mm分ss秒前");
+		sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
+		
+		System.out.println("ユーザー名\t\t:"+user.getName());
+		System.out.println("ユーザーID\t\t:"+user.getScreenName());
+		System.out.println("ツイート数\t\t:"+user.getStatusesCount());
+		System.out.println("最終ツイート\t:"+sdf.format(diff));
+		
+	    //Status status = twitter.updateStatus(args[0]);
+	    //System.out.println("Successfully updated the status to [" + status.getText() + "].");
 	}
 
 }
