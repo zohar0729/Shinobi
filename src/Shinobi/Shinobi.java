@@ -1,4 +1,4 @@
-package twitterClient.Shinobi;
+package Shinobi;
 
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -14,9 +14,9 @@ import java.io.InputStreamReader;
 public class Shinobi {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		System.out.println("Shinobi");
+		if(args.length < 1){
+			System.out.println("");
+		}
 	}
 
 }
