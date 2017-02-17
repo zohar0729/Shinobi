@@ -17,30 +17,35 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class Shinobi {
-	private static long diffDate(Date d){
-		long b, a;
-		Date date = new Date();
-		b=d.getTime();
-		a=date.getTime();
+	private static String diffDate(Date dest){
+		long d = new Date().getTime() - dest.getTime();
+		String s = "";
 		
-		System.out.println(a-b);
+		if(d/1000 < 60){
+			s = s + d/1000 + "秒前";
+		}else if(d/1000/60 < 60){
+			s = s + d/1000/60 + "分前";
+		}else if(d/1000/60/60 < 24){
+			s = s + d/1000/60/60 + "時間前";
+		}else if(d/1000/60/60/24 < 7){
+			s = s + d/1000/60/60/24 + "日前";
+		}else{
+			s = s + dest;
+		}
 		
-		return a-b;
+		return s;
 	}
 	
 	public static void main(String[] args) throws TwitterException{
 		Twitter twitter = new TwitterFactory().getInstance();
 		User user = twitter.verifyCredentials();
-		Date diff = new Date(diffDate(user.getStatus().getCreatedAt()));
-		System.out.println(new Date());
-		System.out.println(user.getStatus().getCreatedAt());
-		SimpleDateFormat sdf = new SimpleDateFormat("MM月dd日HH時間mm分ss秒前");
-		sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
 		
 		System.out.println("ユーザー名\t\t:"+user.getName());
-		System.out.println("ユーザーID\t\t:"+user.getScreenName());
+		System.out.println("ユーザーID\t\t:@"+user.getScreenName());
 		System.out.println("ツイート数\t\t:"+user.getStatusesCount());
-		System.out.println("最終ツイート\t:"+sdf.format(diff));
+		System.out.println("最終ツイート\t:"+diffDate(user.getStatus().getCreatedAt()));
+		
+		
 		
 	    //Status status = twitter.updateStatus(args[0]);
 	    //System.out.println("Successfully updated the status to [" + status.getText() + "].");
