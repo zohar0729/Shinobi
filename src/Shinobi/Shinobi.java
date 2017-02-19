@@ -6,12 +6,13 @@ import twitter4j.TwitterFactory;
 import twitter4j.User;
 
 import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.GridLayout;
 import java.util.Date;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 public class Shinobi extends JFrame{
 	/**
@@ -21,6 +22,10 @@ public class Shinobi extends JFrame{
 	Twitter twitter;
 	User user;
 	JLabel userName, userScreenName, userStatusCount, userLatestStatus;
+	JLabel guide1, guide2;
+	JButton send;
+	JPanel info, guide;
+	JTextArea tweetArea;
 	public static String diffDate(Date dest){
 		long d = new Date().getTime() - dest.getTime();
 		String s = "";
@@ -50,24 +55,30 @@ public class Shinobi extends JFrame{
 		
 		// ウィンドウの初期化
 		setTitle(title);
-		setSize(300, 300);
-		setLayout(new GridLayout());
+		setSize(600, 300);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		// 表示するラベルのインスタンス化および初期化
-		userName = new JLabel("ユーザー名:"+user.getName());
-		userScreenName = new JLabel("ユーザーID:"+user.getScreenName());
-		userStatusCount = new JLabel("ツイート数:"+user.getStatusesCount());
+		userName = new JLabel(" "+user.getName());
+		userScreenName = new JLabel("@"+user.getScreenName());
+		userStatusCount = new JLabel("  ツイート数:"+user.getStatusesCount());
 		userLatestStatus = new JLabel(
-				"最新ツイート:"+Shinobi.diffDate(user.getStatus().getCreatedAt()));
+				"  最新ツイート:"+Shinobi.diffDate(user.getStatus().getCreatedAt()));
+		info = new JPanel();
+		guide = new JPanel();
+		send = new JButton("送信");
+		tweetArea = new JTextArea("今何してる？", 10, 14);
 		
 		// コントロールのレイアウト
-		Container contentPane = getContentPane();
-		contentPane.add(userName, BorderLayout.NORTH);
-		contentPane.add(userScreenName, BorderLayout.NORTH);
-		contentPane.add(userStatusCount, BorderLayout.CENTER);
-		contentPane.add(userLatestStatus, BorderLayout.EAST);
+		add(info, BorderLayout.NORTH);
+		info.add(userName);
+		info.add(userScreenName);
+		info.add(userStatusCount);
+		info.add(userLatestStatus);
+		add(tweetArea, BorderLayout.CENTER);
+		add(send, BorderLayout.SOUTH);
+		
 	}
 	
 }
